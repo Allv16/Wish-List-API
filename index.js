@@ -19,7 +19,9 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(process.env.DB)
+  .connect(
+    `mongodb+srv://admin:${process.env.KEY}@cluster0.8guknrh.mongodb.net/?retryWrites=true&w=majority`
+  )
   .then(() => console.log("Connected to database"))
   .catch(() => console.log("Failed to connect to database"))
   .finally(() => {
