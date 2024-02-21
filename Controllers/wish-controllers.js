@@ -3,9 +3,17 @@ const mongoose = require("mongoose");
 const Wish = require("../Models/wish");
 
 const createWish = async (req, res, next) => {
-  const { title, content } = req.body;
+  const { title, content, open, close, offDay, region, gmaps } = req.body;
   try {
-    const newWish = await Wish.create({ title, content, isCompleted: false });
+    const newWish = await Wish.create({
+      title,
+      content,
+      open,
+      close,
+      offDay,
+      region,
+      gmaps,
+    });
     res
       .status(200)
       .json({ message: "Succesfully created wish", data: newWish });
@@ -34,6 +42,8 @@ const editWish = async (req, res, next) => {
       {
         title,
         content,
+        open,
+        close,
       },
       { new: true }
     );
@@ -45,19 +55,17 @@ const editWish = async (req, res, next) => {
   }
 };
 
-const setCompletedWish = async (req, res, next) => {
+const updateVisitDateWish = async (req, res, next) => {
   const idWish = req.params.id;
   try {
-    const completedWish = await Wish.findByIdAndUpdate(
+    const updatedWish = await Wish.findByIdAndUpdate(
       idWish,
-      {
-        isCompleted: true,
-      },
+      { $push: { visitDate: new Date() } },
       { new: true }
     );
     res
       .status(200)
-      .json({ message: "Succesfully updated wish", data: completedWish });
+      .json({ message: "Succesfully updated wish", data: updatedWish });
   } catch (e) {
     return next(new Error(e, 400));
   }
@@ -66,4 +74,4 @@ const setCompletedWish = async (req, res, next) => {
 exports.createWish = createWish;
 exports.getAllWish = getAllWish;
 exports.editWish = editWish;
-exports.setCompletedWish = setCompletedWish;
+exports.updateVisitDateWish = updateVisitDateWish;
