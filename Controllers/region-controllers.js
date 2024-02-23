@@ -35,7 +35,7 @@ const getAllRegion = async (req, res, next) => {
   try {
     const regions = await Region.findOne();
 
-    res.status(200).json({ status: "ok", regions: regions });
+    res.status(200).json({ status: "ok", regions: regions.regions });
   } catch (e) {
     return next(new Error(e, 400));
   }
