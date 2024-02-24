@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const Wish = require("../Models/wish");
 
 const createWish = async (req, res, next) => {
-  const { title, content, open, close, offDay, region, gmaps } = req.body;
+  const { title, content, open, close, offDay, region, gmaps, category } =
+    req.body;
   try {
     const newWish = await Wish.create({
       title,
@@ -13,6 +14,7 @@ const createWish = async (req, res, next) => {
       offDay,
       region,
       gmaps,
+      category,
     });
     res
       .status(200)
@@ -71,7 +73,43 @@ const updateVisitDateWish = async (req, res, next) => {
   }
 };
 
+const getWishCount = async (req, res, next) => {
+  try {
+    const counts = await Wish.aggregate([
+      {
+        $match: {
+          category: { $in: ["Foods", "Drinks", "Places", "Snacks"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          totalCount: { $sum: 1 },
+          visitDateCount: {
+            $sum: {
+              $cond: {
+                if: { $gt: [{ $size: "$visitDate" }, 0] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    const wishCount = counts.map(({ _id, totalCount, visitDateCount }) => ({
+      category: _id,
+      count: [totalCount - visitDateCount, visitDateCount],
+    }));
+    res.status(200).json({ status: "ok", count: wishCount });
+  } catch (e) {
+    return next(new Error(e, 400));
+  }
+};
+
 exports.createWish = createWish;
 exports.getAllWish = getAllWish;
 exports.editWish = editWish;
 exports.updateVisitDateWish = updateVisitDateWish;
+exports.getWishCount = getWishCount;

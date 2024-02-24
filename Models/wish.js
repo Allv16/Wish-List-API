@@ -9,6 +9,7 @@ const wishSchema = new Schema({
   offDay: { type: String, required: true },
   region: { type: String, required: true },
   gmaps: { type: String },
+  category: { type: String },
   isDeleted: { type: Boolean },
   visitDate: [{ type: Date, required: true }],
 });
