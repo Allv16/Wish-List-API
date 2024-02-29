@@ -25,8 +25,12 @@ const createWish = async (req, res, next) => {
 };
 
 const getAllWish = async (req, res, next) => {
+  const region = req.params.region;
   try {
-    const allWish = await Wish.find({ isCompleted: false });
+    const allWish = await Wish.find({
+      region: region,
+      visitDate: { $exists: true, $size: 0 },
+    });
     res
       .status(200)
       .json({ message: "Succesfully get all wish", data: allWish });
@@ -74,10 +78,12 @@ const updateVisitDateWish = async (req, res, next) => {
 };
 
 const getWishCount = async (req, res, next) => {
+  const region = req.params.region;
   try {
     const counts = await Wish.aggregate([
       {
         $match: {
+          region: region,
           category: { $in: ["Foods", "Drinks", "Places", "Snacks"] },
         },
       },
@@ -98,10 +104,30 @@ const getWishCount = async (req, res, next) => {
       },
     ]);
 
-    const wishCount = counts.map(({ _id, totalCount, visitDateCount }) => ({
+    let wishCount = counts.map(({ _id, totalCount, visitDateCount }) => ({
       category: _id,
       count: [totalCount - visitDateCount, visitDateCount],
     }));
+    if (wishCount.length == 0) {
+      wishCount = [
+        {
+          category: "Drinks",
+          count: [0, 0],
+        },
+        {
+          category: "Foods",
+          count: [0, 0],
+        },
+        {
+          category: "Snacks",
+          count: [0, 0],
+        },
+        {
+          category: "Places",
+          count: [0, 0],
+        },
+      ];
+    }
     res.status(200).json({ status: "ok", count: wishCount });
   } catch (e) {
     return next(new Error(e, 400));

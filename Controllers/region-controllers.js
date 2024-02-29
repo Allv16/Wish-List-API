@@ -6,9 +6,7 @@ const createRegion = async (req, res, next) => {
     const newRegion = await Region.create({
       regions,
     });
-    res
-      .status(200)
-      .json({ message: "Succesfully created regions", data: newRegion });
+    res.status(200).json({ status: "ok", regions: regions.regions });
   } catch (e) {
     return next(new Error(e, 400));
   }
