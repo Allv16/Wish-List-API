@@ -6,14 +6,14 @@ const createRegion = async (req, res, next) => {
     const newRegion = await Region.create({
       regions,
     });
-    res.status(200).json({ status: "ok", regions: regions.regions });
+    res.status(200).json({ status: "ok", regions: newRegion });
   } catch (e) {
     return next(new Error(e, 400));
   }
 };
 
 const addRegion = async (req, res, next) => {
-  const { newRegion } = req.body;
+  const newRegion = req.params.region;
   try {
     const newRegions = await Region.findOneAndUpdate(
       {},
@@ -21,9 +21,7 @@ const addRegion = async (req, res, next) => {
       { new: true }
     );
 
-    res
-      .status(200)
-      .json({ message: "Succesfully add region", data: newRegions });
+    res.status(200).json({ message: "ok", regions: newRegions.regions });
   } catch (e) {
     return next(new Error(e, 400));
   }

@@ -10,7 +10,7 @@ router.get("/api/wish-count/:region", wishController.getWishCount);
 router.put("/api/wish/updateDate/:id", wishController.updateVisitDateWish);
 
 router.post("/api/region", regionController.createRegion);
-router.put("/api/region", regionController.addRegion);
+router.put("/api/region/:region", regionController.addRegion);
 router.get("/api/region", regionController.getAllRegion);
 
 module.exports = router;
