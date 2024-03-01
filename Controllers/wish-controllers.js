@@ -79,12 +79,14 @@ const updateVisitDateWish = async (req, res, next) => {
 
 const getWishCount = async (req, res, next) => {
   const region = req.params.region;
+  const categories = ["Foods", "Drinks", "Places", "Snacks"];
+
   try {
     const counts = await Wish.aggregate([
       {
         $match: {
           region: region,
-          category: { $in: ["Foods", "Drinks", "Places", "Snacks"] },
+          category: { $in: categories },
         },
       },
       {
@@ -104,30 +106,19 @@ const getWishCount = async (req, res, next) => {
       },
     ]);
 
-    let wishCount = counts.map(({ _id, totalCount, visitDateCount }) => ({
-      category: _id,
-      count: [totalCount - visitDateCount, visitDateCount],
-    }));
-    if (wishCount.length == 0) {
-      wishCount = [
-        {
-          category: "Drinks",
-          count: [0, 0],
-        },
-        {
-          category: "Foods",
-          count: [0, 0],
-        },
-        {
-          category: "Snacks",
-          count: [0, 0],
-        },
-        {
-          category: "Places",
-          count: [0, 0],
-        },
-      ];
-    }
+    let wishCount = categories.map((category) => {
+      const categoryCount = counts.find(({ _id }) => _id === category);
+      return {
+        category: category,
+        count: categoryCount
+          ? [
+              categoryCount.totalCount - categoryCount.visitDateCount,
+              categoryCount.visitDateCount,
+            ]
+          : [0, 0],
+      };
+    });
+
     res.status(200).json({ status: "ok", count: wishCount });
   } catch (e) {
     return next(new Error(e, 400));
