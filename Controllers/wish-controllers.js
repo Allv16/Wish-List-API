@@ -24,10 +24,12 @@ const createWish = async (req, res, next) => {
 };
 
 const getAllWish = async (req, res, next) => {
-  const region = req.params.region;
+  const region = req.query.region;
+  const category = req.query.category;
   try {
     const allWish = await Wish.find({
       region: region,
+      category: category,
       visitDate: { $exists: true, $size: 0 },
     });
     res.status(200).json({ status: "ok", wishes: allWish });
