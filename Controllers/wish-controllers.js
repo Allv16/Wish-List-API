@@ -5,6 +5,7 @@ const Wish = require("../Models/wish");
 const createWish = async (req, res, next) => {
   const { title, content, open, close, offDay, region, gmaps, category, tags } =
     req.body;
+  const createdAt = new Date();
   try {
     const newWish = await Wish.create({
       title,
@@ -15,6 +16,7 @@ const createWish = async (req, res, next) => {
       region,
       gmaps,
       tags,
+      createdAt,
       category,
     });
     res.status(200).json({ status: "ok", wish: newWish });
@@ -68,9 +70,7 @@ const updateVisitDateWish = async (req, res, next) => {
       { $push: { visitDate: new Date() } },
       { new: true }
     );
-    res
-      .status(200)
-      .json({ message: "Succesfully updated wish", data: updatedWish });
+    res.status(200).json({ status: "ok", wish: updatedWish });
   } catch (e) {
     return next(new Error(e, 400));
   }

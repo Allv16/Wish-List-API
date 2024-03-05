@@ -11,6 +11,7 @@ const wishSchema = new Schema({
   gmaps: { type: String },
   category: { type: String },
   isDeleted: { type: Boolean },
+  createdAt: { type: Date },
   tags: [{ type: String }],
   visitDate: [{ type: Date, required: true }],
 });
