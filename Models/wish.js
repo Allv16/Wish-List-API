@@ -6,14 +6,14 @@ const wishSchema = new Schema({
   content: { type: String, required: true },
   open: { type: String, required: true },
   close: { type: String, required: true },
-  offDay: { type: String, required: true },
+  offDay: { type: String },
   region: { type: String, required: true },
   gmaps: { type: String },
   category: { type: String },
   isDeleted: { type: Boolean },
   createdAt: { type: Date },
   tags: [{ type: String }],
-  visitDate: [{ type: Date, required: true }],
+  visitDate: [{ type: Date }],
 });
 
 module.exports = mongoose.model("Wish", wishSchema);
